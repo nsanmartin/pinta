@@ -15,7 +15,8 @@ long get_time_millis() {
     return t.tv_sec * MS_PER_SECOND + t.tv_nsec / NS_PER_MS;
 }
 
-int process_input(DibuApp* app) {
+int process_input(void* data) {
+    DibuApp* app = (DibuApp*) data;
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
         if (e.type == SDL_QUIT || (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_q)) {
@@ -52,23 +53,9 @@ int process_input(DibuApp* app) {
 
 void render(DibuApp* app) {
 
-        SDL_RenderClear(app->media->renderer);
-
-        SDL_SetRenderDrawColor(app->media->renderer, 255, 255, 255, 255 );
-
-        SDL_RenderClear(app->media->renderer);
-        SDL_SetRenderDrawColor(app->media->renderer, 255, 148, 57, 253 );
-        for (size_t i = 0; i < WINDOW_WIDTH; ++i) {
-            for (size_t j = 0; j < WINDOW_HEIGHT; ++j) {
-                if (*dibTableAt(app->table, i, j) != 0) {
-                   if(SDL_RenderDrawPoint(app->media->renderer, i, j)) {
-                        fprintf(stderr, "error drawing point");
-                        exit(1);
-                   }
-                }
-            }
-        }
-
+    SDL_UpdateTexture(app->media->texture, NULL, app->table->data, 640 * sizeof(Uint32));
+    SDL_RenderClear(app->media->renderer);
+    SDL_RenderCopy(app->media->renderer, app->media->texture, NULL, NULL);
     SDL_RenderPresent(app->media->renderer);
 }
 
@@ -77,11 +64,11 @@ int main(void)
 {
     DibuApp* app = newDibuApp(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-    int close_requested = 0;
     long previous = get_time_millis();
     long lag = 0;
-    const long slice = 2;
-    
+
+    //SDL_Thread* threadID = SDL_CreateThread(process_input,"process_input", (void*) app);   
+
     while (!app->quit) {
         long current = get_time_millis();
         long elapsed = current - previous;
@@ -89,13 +76,9 @@ int main(void)
         lag += elapsed;
 
         process_input(app);
-
-        for (;!close_requested && lag >= slice; lag -= slice){
-            //update(app, buttons, mouse_x, mouse_y);
-        }
         render(app);
     }
-    
+    //SDL_WaitThread( threadID, NULL );   
     freeDibuApp(app);
 
 }

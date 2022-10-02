@@ -1,11 +1,13 @@
 #ifndef __H_DIBU_TABLE_H_ 
 #define __H_DIBU_TABLE_H_ 
 
+#include <SDL2/SDL.h>
+
 #include <point.h>
 #include <dibpencil.h>
 
 typedef struct {
-    int* data;
+    Uint32* data;
     size_t w,h;
     DibPencil pencil;
 } DibTable;
@@ -13,5 +15,5 @@ typedef struct {
 DibTable* newDibTable(size_t w, size_t h);
 void freeDibTable(DibTable* table);
 
-int* dibTableAt(DibTable* table, size_t x, size_t y);
+Uint32* dibTableAt(DibTable* table, size_t x, size_t y);
 #endif

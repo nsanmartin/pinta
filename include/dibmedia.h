@@ -11,7 +11,7 @@ typedef struct {
     SDL_Window* window;
     Dimensions dim;
     SDL_Renderer* renderer;
-    //SDL_Event event;
+    SDL_Texture * texture;
 } DibMedia;
 
 DibMedia* newDibMedia(Dimensions dim);

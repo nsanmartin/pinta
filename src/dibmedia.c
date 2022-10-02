@@ -36,9 +36,25 @@ void sdl_media_init(DibMedia* media) {
         fprintf(stderr, "SDL_CreateRenderer Error: %s\n", SDL_GetError());
         exit(1);
     }
+
+    media->texture = SDL_CreateTexture(
+        media->renderer,
+        SDL_PIXELFORMAT_ARGB8888,
+        SDL_TEXTUREACCESS_STATIC,
+        media->dim.w,
+        media->dim.h
+    );
+
+    if (media->texture == NULL) {
+        SDL_DestroyWindow(media->window);
+        SDL_DestroyRenderer(media->renderer);
+        fprintf(stderr, "SDL_CreateTexture Error: %s\n", SDL_GetError());
+        exit(1);
+    }
 }
 
 void freeDibMedia(DibMedia* media) {
+    SDL_DestroyTexture(media->texture);
     SDL_DestroyRenderer(media->renderer);
     SDL_DestroyWindow(media->window); 
     free(media);

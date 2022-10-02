@@ -6,8 +6,9 @@
 
 
 DibTable* newDibTable(size_t w, size_t h) {
-    int* data = calloc(w * h,  sizeof(int));
+    Uint32* data = malloc(w * h * sizeof(Uint32));
     if (!data) { return NULL; }
+    memset(data, 255, w * h * sizeof(Uint32));
     DibTable* rv = malloc(sizeof(DibTable));
     if (!rv) { return NULL; }
     *rv = (DibTable) {
@@ -23,7 +24,7 @@ void freeDibTable(DibTable* table) {
     free(table);
 }
 
-int* dibTableAt(DibTable* t, size_t x, size_t y) {
+Uint32* dibTableAt(DibTable* t, size_t x, size_t y) {
     size_t ix = t->w * y + x;
     assert(ix < t->w * t->h);
     return &t->data[ix];
