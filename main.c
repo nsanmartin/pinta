@@ -16,11 +16,11 @@ long get_time_millis() {
 }
 
 int process_input(int* buttons, int* mouse_x, int* mouse_y) {
-    SDL_Event event;
-    while (SDL_PollEvent(&event))
+    SDL_Event e;
+    while (SDL_PollEvent(&e))
     {
-        if (event.type == SDL_QUIT
-            || (event.type == SDL_KEYDOWN && event.key.keysym.sym == SDLK_q)) {
+        if (e.type == SDL_QUIT
+            || (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_q)) {
             //close_requested = 1;
             return 1;
         }
