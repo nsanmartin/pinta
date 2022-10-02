@@ -4,7 +4,7 @@ BUILD := ./build
 HDRS := -I./include
 SRCS=./src/*.c
 
-dibu:
+pinta:
 	$(CC) -o $(BUILD)/$@ main.c $(HDRS) $(CFLAGS) $(SRCS)
 
 all: $(EXEC)
