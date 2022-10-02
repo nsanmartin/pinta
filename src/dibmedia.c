@@ -14,7 +14,7 @@ void sdl_media_init(DibMedia* media) {
     atexit (SDL_Quit);
 
     media->window = SDL_CreateWindow(
-        "dibu",
+        "pinta",
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED,
         media->dim.w,

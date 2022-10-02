@@ -7,6 +7,7 @@
 typedef struct {
     DibTable* table;
     DibMedia* media;
+    bool quit;
 } DibuApp;
 
 DibuApp* newDibuApp(size_t w, size_t h);

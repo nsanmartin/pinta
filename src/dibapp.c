@@ -13,8 +13,8 @@ DibuApp* newDibuApp(size_t w, size_t h) {
     DibuApp* rv = malloc(sizeof(DibuApp));
     *rv = (DibuApp) {
         .table = table,
-        .media = media
-
+        .media = media,
+        .quit = false
     };
 
     return rv;
