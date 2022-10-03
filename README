@@ -1,0 +1,8 @@
+A program that draws on a window using SDL_Texture.
+
+```
+mkdir build
+make pinta
+./build/pinta
+```
+

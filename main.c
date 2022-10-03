@@ -65,28 +65,41 @@ int process_input(void* data) {
     while (SDL_PollEvent(&e)) {
         if (e.type == SDL_QUIT || (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_q)) {
             app->quit = true;
-        } else if (e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN ) {
-            int x, y;
-            if(SDL_GetMouseState( &x, &y ) & SDL_BUTTON_LEFT) {
-                if (y >= 0 && y < WINDOW_HEIGHT && x >= 0 && x < WINDOW_WIDTH) {
-                    if (mouse_up) {
-                        mouse_up = false;
-                        lastx = x;
-                        lasty = y;
-                    } else if (x != lastx) {
-                        Line l = get_line(lastx, x, lasty, y);
-                        for (size_t i = lastx; i < x; ++i) {
-                            int j = l.yintercept + l.slope * i;
-                            draw_dot(i, j, app->table);
-                        }
-                        lastx = x;
-                        lasty = y;
-                    }
+            return 0;
+        }
 
-                    draw_dot(x, y, app->table);
+        int x, y;
+        bool left_button = SDL_GetMouseState( &x, &y ) & SDL_BUTTON_LEFT;
+
+        if (left_button && e.type == SDL_MOUSEBUTTONDOWN) {
+            mouse_up = false;
+            lastx = x;
+            lasty = y;
+
+            if (y >= 0 && y < WINDOW_HEIGHT && x >= 0 && x < WINDOW_WIDTH) {
+                draw_dot(x, y, app->table);
+            }
+
+        } else if (!mouse_up && e.type == SDL_MOUSEMOTION) {
+            //,todo: use the largest between delta x an delta y
+            if (x != lastx) {
+                Line l = get_line(lastx, x, lasty, y);
+                SortedPair xs = sortedPairFrom(lastx, x);
+                for (size_t i = xs.min; i < xs.max; ++i) {
+                    int j = l.yintercept + l.slope * i;
+                    draw_dot(i, j, app->table);
+                }
+            } else {
+                SortedPair ys = sortedPairFrom(lasty, y);
+                for (size_t i = ys.min; i < ys.max; ++i) {
+                    draw_dot(x, i, app->table);
                 }
             }
-        } else if (e.type == SDL_MOUSEBUTTONUP ) {
+            lastx = x;
+            lasty = y;
+
+        } 
+        if (e.type == SDL_MOUSEBUTTONUP ) {
             mouse_up = true;
         }
     }
