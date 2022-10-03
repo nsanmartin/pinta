@@ -4,9 +4,29 @@
 #include <SDL2/SDL.h>
 
 #include <dibapp.h>
+#include <point.h>
 
 #define WINDOW_WIDTH 640UL
 #define WINDOW_HEIGHT 480UL
+
+size_t lastx, lasty;
+bool mouse_up;
+
+typedef struct {
+    double slope, yintercept;
+} Line;
+
+typedef struct {
+    int min, max;
+} SortedPair;
+
+SortedPair sortedPairFrom(int a, int b) {
+    if (a <= b) {
+        return (SortedPair) { .min = a, .max = b };
+    } else {
+        return (SortedPair) { .min = b, .max = a };
+    }
+}
 
 enum { NS_PER_SECOND = 1000000000, MS_PER_SECOND = 1000, NS_PER_MS = 1000000 };
 long get_time_millis() {
@@ -15,36 +35,59 @@ long get_time_millis() {
     return t.tv_sec * MS_PER_SECOND + t.tv_nsec / NS_PER_MS;
 }
 
+Line get_line(int x0, int x1, int y0, int y1) {
+    Line rv;
+    rv.slope = (double)(y1-y0) / (double)(x1-x0);
+    rv.yintercept = y0 - rv.slope*x0;
+    return rv;
+}
+
+void draw_dot(int x, int y, DibTable* t) {
+    size_t sz = t->pencil.sz;
+    size_t fromx = x - sz;
+    size_t fromy = y - sz;
+    size_t tox = x + sz - 1;
+    size_t toy = y + sz - 1;
+
+    if (fromx < t->w && tox < t->w && fromy < t->h && toy < t->h) {
+        for (size_t i = fromx; i < tox; ++i) {
+            for (size_t j = fromy; j < toy; ++j) {
+                *dibTableAt(t, i, j) = 1;
+            }
+            
+        }
+    }
+}
+
 int process_input(void* data) {
     DibuApp* app = (DibuApp*) data;
     SDL_Event e;
     while (SDL_PollEvent(&e)) {
         if (e.type == SDL_QUIT || (e.type == SDL_KEYDOWN && e.key.keysym.sym == SDLK_q)) {
             app->quit = true;
-        } else if (e.type == SDL_MOUSEMOTION
-            || e.type == SDL_MOUSEBUTTONDOWN
-            || e.type == SDL_MOUSEBUTTONUP ) {
-
+        } else if (e.type == SDL_MOUSEMOTION || e.type == SDL_MOUSEBUTTONDOWN ) {
             int x, y;
             if(SDL_GetMouseState( &x, &y ) & SDL_BUTTON_LEFT) {
                 if (y >= 0 && y < WINDOW_HEIGHT && x >= 0 && x < WINDOW_WIDTH) {
-                    size_t sz = app->table->pencil.sz;
-                    size_t fromx = x - sz;
-                    size_t fromy = y - sz;
-                    size_t tox = x + sz - 1;
-                    size_t toy = y + sz - 1;
-
-                    if (fromx < app->table->w && tox < app->table->w
-                        && fromy < app->table->h && toy < app->table->h) {
-                        for (size_t i = fromx; i < tox; ++i) {
-                            for (size_t j = fromy; j < toy; ++j) {
-                                *dibTableAt(app->table, i, j) = 1;
-                            }
-                            
+                    if (mouse_up) {
+                        mouse_up = false;
+                        lastx = x;
+                        lasty = y;
+                    } else if (x != lastx) {
+                        Line l = get_line(lastx, x, lasty, y);
+                        for (size_t i = lastx; i < x; ++i) {
+                            int j = l.yintercept + l.slope * i;
+                            draw_dot(i, j, app->table);
                         }
+                        lastx = x;
+                        lasty = y;
                     }
+
+                    draw_dot(x, y, app->table);
                 }
             }
+        } else if (e.type == SDL_MOUSEBUTTONUP ) {
+            mouse_up = true;
         }
     }
 
@@ -66,6 +109,7 @@ int main(void)
 
     long previous = get_time_millis();
     long lag = 0;
+    mouse_up = true;
 
     //SDL_Thread* threadID = SDL_CreateThread(process_input,"process_input", (void*) app);   
 
