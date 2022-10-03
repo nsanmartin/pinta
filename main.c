@@ -127,23 +127,24 @@ void render(DibuApp* app) {
 int main(void)
 {
     DibuApp* app = newDibuApp(WINDOW_WIDTH, WINDOW_HEIGHT);
+    if (app == NULL) {
+        fprintf(stderr, "Could not load app, exiting.");
+    } else {
 
-    long previous = get_time_millis();
-    long lag = 0;
-    mouse_up = true;
+        long previous = get_time_millis();
+        long lag = 0;
+        mouse_up = true;
 
-    //SDL_Thread* threadID = SDL_CreateThread(process_input,"process_input", (void*) app);   
+        while (!app->quit) {
+            long current = get_time_millis();
+            long elapsed = current - previous;
+            previous = current;
+            lag += elapsed;
 
-    while (!app->quit) {
-        long current = get_time_millis();
-        long elapsed = current - previous;
-        previous = current;
-        lag += elapsed;
+            process_input(app);
+            render(app);
+        }
 
-        process_input(app);
-        render(app);
+        freeDibuApp(app);
     }
-    //SDL_WaitThread( threadID, NULL );   
-    freeDibuApp(app);
-
 }
