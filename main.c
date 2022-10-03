@@ -1,7 +1,8 @@
+#include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
 #include <time.h>
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include <dibapp.h>
 #include <point.h>
@@ -9,7 +10,7 @@
 #define WINDOW_WIDTH 640UL
 #define WINDOW_HEIGHT 480UL
 
-size_t lastx, lasty;
+int lastx, lasty;
 bool mouse_up;
 
 typedef struct {
@@ -81,8 +82,7 @@ int process_input(void* data) {
             }
 
         } else if (!mouse_up && e.type == SDL_MOUSEMOTION) {
-            //,todo: use the largest between delta x an delta y
-            if (x != lastx) {
+            if (abs(lastx-x) > abs(lasty-y)) {
                 Line l = get_line(lastx, x, lasty, y);
                 SortedPair xs = sortedPairFrom(lastx, x);
                 for (size_t i = xs.min; i < xs.max; ++i) {
@@ -91,8 +91,16 @@ int process_input(void* data) {
                 }
             } else {
                 SortedPair ys = sortedPairFrom(lasty, y);
-                for (size_t i = ys.min; i < ys.max; ++i) {
-                    draw_dot(x, i, app->table);
+                if (lastx == x) {
+                    for (size_t i = ys.min; i < ys.max; ++i) {
+                        draw_dot(x, i, app->table);
+                    }
+                } else {
+                    Line l = get_line(lastx, x, lasty, y);
+                    for (size_t i = ys.min; i < ys.max; ++i) {
+                        int j = (i - l.yintercept) / l.slope;
+                        draw_dot(j, i, app->table);
+                    }
                 }
             }
             lastx = x;

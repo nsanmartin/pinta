@@ -1,7 +1,7 @@
 #ifndef __H_DIBU_TABLE_H_ 
 #define __H_DIBU_TABLE_H_ 
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 #include <point.h>
 #include <dibpencil.h>

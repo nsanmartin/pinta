@@ -1,7 +1,7 @@
 #ifndef __H_DIBU_MEDIA_H_
 #define __H_DIBU_MEDIA_H_
 
-#include <SDL2/SDL.h>
+#include <SDL.h>
 
 typedef struct {
     int w, h;
