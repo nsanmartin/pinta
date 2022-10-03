@@ -4,11 +4,11 @@
 #include <dibmedia.h>
 
 
-void sdl_media_init(DibMedia* media) {
+int sdl_media_init(DibMedia* media) {
     
     if (SDL_Init (SDL_INIT_VIDEO|SDL_INIT_TIMER) < 0) {
         fprintf(stderr, "Couldn't initialize SDL\n");
-        exit (1);
+        return -1;
     }
 
     atexit (SDL_Quit);
@@ -24,7 +24,7 @@ void sdl_media_init(DibMedia* media) {
     
     if (media->window == NULL) {
         fprintf(stderr, "SDL_CreateWindow error: %s\n", SDL_GetError());
-        exit(1);
+        return -1;
     }
     
     media->renderer = SDL_CreateRenderer(
@@ -34,7 +34,7 @@ void sdl_media_init(DibMedia* media) {
     if (media->renderer == NULL) {
         SDL_DestroyWindow(media->window);
         fprintf(stderr, "SDL_CreateRenderer Error: %s\n", SDL_GetError());
-        exit(1);
+        return -1;
     }
 
     media->texture = SDL_CreateTexture(
@@ -49,8 +49,9 @@ void sdl_media_init(DibMedia* media) {
         SDL_DestroyWindow(media->window);
         SDL_DestroyRenderer(media->renderer);
         fprintf(stderr, "SDL_CreateTexture Error: %s\n", SDL_GetError());
-        exit(1);
+        return -1;
     }
+    return 0;
 }
 
 void freeDibMedia(DibMedia* media) {
@@ -73,6 +74,9 @@ DibMedia* newDibMedia(Dimensions dim) {
         .renderer = NULL
     };
 
-    sdl_media_init(rv);
+    if(sdl_media_init(rv) != 0) {
+        free(rv);
+        return NULL;
+    }
     return rv;
 }
