@@ -15,5 +15,5 @@ typedef struct {
 DibTable* newDibTable(size_t w, size_t h);
 void freeDibTable(DibTable* table);
 
-Uint32* dibTableAt(DibTable* table, size_t x, size_t y);
+Uint32* dibTableAt(DibTable* table, int x, int y);
 #endif

@@ -28,8 +28,11 @@ void freeDibTable(DibTable* table) {
     free(table);
 }
 
-Uint32* dibTableAt(DibTable* t, size_t x, size_t y) {
+Uint32* dibTableAt(DibTable* t, int x, int y) {
     size_t ix = t->w * y + x;
+    if (ix >= t->w * t->h) {
+        printf("index error: %d, %d\n", x, y);
+    }
     assert(ix < t->w * t->h);
     return &t->data[ix];
 }
