@@ -12,6 +12,7 @@ VecPoints* newVecPoints(size_t capacity) {
     }
     VecPoints* rv = malloc(sizeof(VecPoints));
     if (!rv) {
+        free(data);
         return NULL;
     }
     *rv = (VecPoints) {

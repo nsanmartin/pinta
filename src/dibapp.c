@@ -9,8 +9,17 @@ DibuApp* newDibuApp(size_t w, size_t h) {
     DibTable* table = newDibTable(w, h);
     if (!table) { return NULL; }
     DibMedia* media = newDibMedia((Dimensions){ .w = w, .h = h});
-    if (!media) { return NULL; }
+    if (!media) {
+        freeDibTable(table);
+        return NULL;
+    }
     DibuApp* rv = malloc(sizeof(DibuApp));
+    if (!rv) {
+        freeDibMedia(media);
+        freeDibTable(table);
+        return NULL;
+    }
+
     *rv = (DibuApp) {
         .table = table,
         .media = media,

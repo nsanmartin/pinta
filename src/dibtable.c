@@ -10,7 +10,10 @@ DibTable* newDibTable(size_t w, size_t h) {
     if (!data) { return NULL; }
     memset(data, 255, w * h * sizeof(Uint32));
     DibTable* rv = malloc(sizeof(DibTable));
-    if (!rv) { return NULL; }
+    if (!rv) {
+        free(data);
+        return NULL;
+    }
     *rv = (DibTable) {
         .data = data,
         .w = w,
@@ -21,6 +24,7 @@ DibTable* newDibTable(size_t w, size_t h) {
 }
 
 void freeDibTable(DibTable* table) {
+    free(table->data);
     free(table);
 }
 
