@@ -1,5 +1,4 @@
-#include <stdlib.h>
-
+#include <dibmem.h>
 #include <dibapp.h>
 #include <point.h>
 

@@ -1,8 +1,8 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <assert.h>
 
 #include <dibtable.h>
+#include <dibmem.h>
 
 
 DibTable* newDibTable(size_t w, size_t h) {
@@ -24,8 +24,10 @@ DibTable* newDibTable(size_t w, size_t h) {
 }
 
 void freeDibTable(DibTable* table) {
-    free(table->data);
-    free(table);
+    if (table) {
+        free(table->data);
+        free(table);
+    }
 }
 
 Uint32* dibTableAt(DibTable* t, int x, int y) {

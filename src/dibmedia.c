@@ -1,7 +1,6 @@
-#include <stdlib.h>
-
 #include <point.h>
 #include <dibmedia.h>
+#include <dibmem.h>
 
 
 int sdl_media_init(DibMedia* media) {

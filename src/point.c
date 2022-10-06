@@ -1,5 +1,5 @@
-#include <stdlib.h>
 #include <point.h>
+#include <dibmem.h>
 
 bool point_eq(Point p, Point q) {
     return p.x == q.x && p.y == q.y;
