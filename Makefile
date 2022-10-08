@@ -4,13 +4,14 @@ BUILD := ./build
 HDRS := -I./include
 SRCS=./src/*.c
 
-pinta:
+pinta:build
 	$(CC) -o $(BUILD)/$@ main.c $(HDRS) $(CFLAGS) $(SRCS)
 
-debug:
+debug:build
 	$(CC) -g -o $(BUILD)/$@ main.c $(HDRS) $(CFLAGS) $(SRCS)
 
-all: $(EXEC)
+build:
+	if [ ! -d build ]; then mkdir build; fi
 
 clean:
 	rm $(BUILD)/*
